@@ -1,4 +1,4 @@
-python qlora.py \
+python qlora_fl.py \
     --model_name_or_path huggyllama/llama-7b \
     --output_dir ./output/guanaco-7b \
     --logging_steps 10 \
@@ -35,7 +35,7 @@ python qlora.py \
     --gradient_accumulation_steps 16 \
     --max_steps 1875 \
     --eval_steps 187 \
-    --learning_rate 0.0002 \
+    --learning_rate 0.0004 \
     --adam_beta2 0.999 \
     --max_grad_norm 0.3 \
     --lora_dropout 0.1 \

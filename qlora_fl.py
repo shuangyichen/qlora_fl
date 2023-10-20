@@ -44,6 +44,7 @@ from peft import (
 )
 from peft.tuners.lora import LoraLayer
 from transformers.trainer_utils import PREFIX_CHECKPOINT_DIR
+from seqtrain import CustomSeq2SeqTrainer
 
 
 def is_ipex_available():
@@ -395,9 +396,9 @@ def get_accelerate_model(args, checkpoint_dir):
                 task_type="CAUSAL_LM",
             )
             model = get_peft_model(model, config)
-            for name, param in model.named_parameters():
-                if param.requires_grad:
-                    print(name, param.shape)
+            # for name, param in model.named_parameters():
+            #     if param.requires_grad:
+            #         print(name, param.shape)
 
     for name, module in model.named_modules():
         if isinstance(module, LoraLayer):
@@ -715,7 +716,14 @@ def train():
 
     data_module = make_data_module(tokenizer=tokenizer, args=args)
     
-    trainer = Seq2SeqTrainer(
+    # trainer = Seq2SeqTrainer(
+    #     model=model,
+    #     tokenizer=tokenizer,
+    #     args=training_args,
+    #     **{k:v for k,v in data_module.items() if k != 'predict_dataset'},
+    # )
+    print("Loading customize trainer")
+    trainer = CustomSeq2SeqTrainer(
         model=model,
         tokenizer=tokenizer,
         args=training_args,
@@ -803,6 +811,7 @@ def train():
     all_metrics = {"run_name": args.run_name}
     # Training
     if args.do_train:
+        print("Training")
         logger.info("*** Train ***")
         # Note: `resume_from_checkpoint` not supported for adapter checkpoints by HF.
         # Currently adapter checkpoint is reloaded as expected but optimizer/scheduler states are not.
